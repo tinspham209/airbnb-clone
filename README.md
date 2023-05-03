@@ -3,7 +3,9 @@
 ## Tech-stack
 - Next.JS 13
 - TypeScript
-- Tailwindcss
+- TailwindCSS
+- Zustand (state management)
+- React-hook-form
 
 ## Installation
 ```

@@ -69,7 +69,7 @@ const Button: React.FC<Props> = ({
 					</svg>
 				</div>
 			) : (
-				Icon && <Icon size={24} className="absolute left-4 top-3" />
+				Icon && <Icon size={24} className="absolute left-4 top-2" />
 			)}
 			{children}
 		</button>

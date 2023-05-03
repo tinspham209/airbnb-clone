@@ -4,6 +4,7 @@ import React from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "../avatar";
 import MenuItem from "./menuItem";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
 type Props = {};
 const UserMenu: React.FC<Props> = () => {
 	const [isOpen, setIsOpen] = React.useState(false);
@@ -11,6 +12,8 @@ const UserMenu: React.FC<Props> = () => {
 	const toggleOpen = React.useCallback(() => {
 		setIsOpen((prev) => !prev);
 	}, []);
+
+	const registerModal = useRegisterModal();
 
 	return (
 		<div className="relative">
@@ -36,7 +39,7 @@ const UserMenu: React.FC<Props> = () => {
 					<div className="flex flex-col cursor-pointer">
 						{[
 							{ label: "Login", onClick: () => {} },
-							{ label: "Sign Up", onClick: () => {} },
+							{ label: "Sign Up", onClick: registerModal.onOpen },
 						].map((item, index) => (
 							<MenuItem
 								key={`${item.label}-${index}`}

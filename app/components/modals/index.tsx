@@ -8,6 +8,7 @@ interface Props {
 	onSubmit?: () => void;
 	title?: string;
 	body?: React.ReactElement;
+	footer?: React.ReactElement;
 	actionLabel?: string;
 	disabled?: boolean;
 	secondaryAction?: () => void;
@@ -18,6 +19,8 @@ const Modal: React.FC<Props> = ({
 	onClose = () => {},
 	onSubmit = () => {},
 	body,
+	footer,
+
 	disabled,
 	isOpen,
 	secondaryAction,
@@ -103,6 +106,7 @@ const Modal: React.FC<Props> = ({
 										{actionLabel}
 									</Button>
 								</div>
+								{footer}
 							</div>
 						</div>
 					</div>
