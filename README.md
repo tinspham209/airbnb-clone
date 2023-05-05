@@ -4,8 +4,9 @@
 - Next.JS 13
 - TypeScript
 - TailwindCSS
-- Zustand (state management)
+- Zustand
 - React-hook-form
+- Prisma
 
 ## Installation
 ```
