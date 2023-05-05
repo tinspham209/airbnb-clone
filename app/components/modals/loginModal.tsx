@@ -6,25 +6,28 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillGithub } from "react-icons/ai";
 import { ROUTE } from "@/app/api/constant";
-import { useRegisterModal } from "@/app/hooks";
+import { useRegisterModal, useLoginModal } from "@/app/hooks";
 import { toast } from "react-hot-toast";
 import Modal from ".";
 import Heading from "../heading";
 import Input from "../inputs";
 import InputPassword from "../inputs/password";
 import Button from "../button";
-
-const RegisterModal = () => {
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+const LoginModal = () => {
+	const router = useRouter();
 	const registerModal = useRegisterModal();
+	const loginModal = useLoginModal();
 	const [isLoading, setIsLoading] = React.useState(false);
 
 	const {
 		register,
 		handleSubmit,
+		setError,
 		formState: { errors },
 	} = useForm<FieldValues>({
 		defaultValues: {
-			name: "",
 			email: "",
 			password: "",
 		},
@@ -33,31 +36,37 @@ const RegisterModal = () => {
 	const onSubmit: SubmitHandler<FieldValues> = (data) => {
 		setIsLoading(true);
 
-		axios
-			.post(ROUTE.register, data)
-			.then(() => {
-				registerModal.onClose();
-			})
-			.catch((error) => {
-				toast.error(error?.message || "Something went wrong!");
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
+		signIn("credentials", {
+			...data,
+			redirect: false,
+		}).then((callback) => {
+			setIsLoading(false);
+
+			if (callback?.ok) {
+				toast.success("Logged in successfully!");
+				router.refresh();
+				loginModal.onClose();
+			}
+			if (callback?.error) {
+				setError("password", {
+					message: callback.error,
+				});
+			}
+		});
 	};
 
 	return (
 		<Modal
 			disabled={isLoading}
 			isLoading={isLoading}
-			isOpen={registerModal.isOpen}
-			title="Register"
+			isOpen={loginModal.isOpen}
+			title="Login"
 			actionLabel="Continue"
-			onClose={registerModal.onClose}
+			onClose={loginModal.onClose}
 			onSubmit={handleSubmit(onSubmit)}
 			body={
 				<div className="flex flex-col gap-4">
-					<Heading title="Welcome to Airbnb" subTitle="Create an account!" />
+					<Heading title="Welcome back" subTitle="Login to your account!" />
 					<Input
 						id="email"
 						label="Email"
@@ -66,14 +75,6 @@ const RegisterModal = () => {
 						errors={errors}
 						required
 						type="email"
-					/>
-					<Input
-						id="name"
-						label="Name"
-						disabled={isLoading}
-						register={register}
-						errors={errors}
-						required
 					/>
 					<InputPassword
 						id="password"
@@ -113,4 +114,4 @@ const RegisterModal = () => {
 	);
 };
 
-export default RegisterModal;
+export default LoginModal;

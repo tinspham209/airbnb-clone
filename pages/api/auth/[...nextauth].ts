@@ -42,7 +42,7 @@ export const authOptions: AuthOptions = {
 					user.hashedPassword
 				);
 				if (!isCorrectPassword) {
-					throw new Error("Invalid credentials");
+					throw new Error("Invalid email or password. Please try again.");
 				}
 
 				return user;

@@ -3,15 +3,20 @@
 import React from "react";
 
 interface Props {
-	onClick: () => void;
+	onClick?: () => void;
 	label: string;
+	disabled?: boolean;
 }
 
-const MenuItem: React.FC<Props> = ({ label, onClick }) => {
+const MenuItem: React.FC<Props> = ({ label, onClick, disabled }) => {
 	return (
 		<div
-			onClick={onClick}
-			className="px-4 py-3 hover:bg-neutral-50 transition font-semibold"
+			onClick={() => {
+				if (onClick) onClick();
+			}}
+			className={`px-4 py-3 hover:bg-neutral-50 transition font-semibold ${
+				disabled ? "hover:bg-white cursor-default" : ""
+			}`}
 		>
 			{label}
 		</div>

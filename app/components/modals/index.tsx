@@ -13,6 +13,7 @@ interface Props {
 	disabled?: boolean;
 	secondaryAction?: () => void;
 	secondaryActionLabel?: string;
+	isLoading?: boolean;
 }
 const Modal: React.FC<Props> = ({
 	actionLabel,
@@ -20,7 +21,7 @@ const Modal: React.FC<Props> = ({
 	onSubmit = () => {},
 	body,
 	footer,
-
+	isLoading,
 	disabled,
 	isOpen,
 	secondaryAction,
@@ -102,7 +103,11 @@ const Modal: React.FC<Props> = ({
 											{secondaryActionLabel}
 										</Button>
 									)}
-									<Button onClick={handleSubmit} disabled={disabled}>
+									<Button
+										onClick={handleSubmit}
+										disabled={disabled}
+										loading={isLoading}
+									>
 										{actionLabel}
 									</Button>
 								</div>
