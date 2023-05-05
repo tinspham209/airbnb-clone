@@ -15,6 +15,9 @@ const Logo = () => {
 			src="/images/logo.png"
 			priority={false}
 			placeholder="empty"
+			onClick={() => {
+				router.push("/");
+			}}
 		/>
 	);
 };
