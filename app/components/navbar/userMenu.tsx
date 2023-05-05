@@ -1,6 +1,6 @@
 "use client";
 
-import { useLoginModal, useRegisterModal } from "@/app/hooks";
+import { useLoginModal, useRegisterModal, useRentModal } from "@/app/hooks";
 import { SafeUser } from "@/app/types";
 import { signOut } from "next-auth/react";
 import React from "react";
@@ -24,6 +24,7 @@ const UserMenu: React.FC<Props> = ({ currentUser }) => {
 
 	const registerModal = useRegisterModal();
 	const loginModal = useLoginModal();
+	const rentModal = useRentModal();
 
 	const menuOptions = React.useMemo(() => {
 		return [
@@ -79,7 +80,7 @@ const UserMenu: React.FC<Props> = ({ currentUser }) => {
 			{
 				label: "Airbnb my home",
 				onClick: () => {
-					toast.success("Airbnb my home");
+					rentModal.onOpen();
 				},
 				isShow: isLoggedIn,
 			},
@@ -92,13 +93,24 @@ const UserMenu: React.FC<Props> = ({ currentUser }) => {
 				isShow: isLoggedIn,
 			},
 		];
-	}, [isLoggedIn, loginModal, registerModal]);
+	}, [isLoggedIn, loginModal, registerModal, rentModal]);
+
+	const onRent = React.useCallback(() => {
+		if (!currentUser) {
+			return loginModal.onOpen();
+		}
+
+		// Open rent modal
+		rentModal.onOpen();
+	}, [currentUser, loginModal, rentModal]);
 
 	return (
 		<div className="relative">
 			<div className="flex flex-row items-center gap-3">
 				<button
-					onClick={() => {}}
+					onClick={() => {
+						onRent();
+					}}
 					className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer"
 				>
 					Airbnb your home
