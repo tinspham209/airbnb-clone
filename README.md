@@ -7,6 +7,7 @@
 - Zustand
 - React-hook-form
 - Prisma
+- Next/auth
 
 ## Installation
 ```
