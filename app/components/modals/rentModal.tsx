@@ -9,6 +9,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import CountrySelect from "../select/country";
 import dynamic from "next/dynamic";
 import Counter from "../inputs/counter";
+import ImageUpload from "../upload/image";
 
 enum STEP_KEY {
 	CATEGORY = "category",
@@ -125,6 +126,7 @@ const RentModal = () => {
 	const guestCount = watch(STEP_KEY.GUEST_COUNT);
 	const roomCount = watch(STEP_KEY.ROOM_COUNT);
 	const bathroomCount = watch(STEP_KEY.BATHROOM_COUNT);
+	const imageSrc = watch(STEP_KEY.IMAGE_SRC);
 
 	const setCustomValue = React.useCallback(
 		(id: string, value: any) => {
@@ -158,6 +160,10 @@ const RentModal = () => {
 		);
 	}, [bathroomCount, guestCount, roomCount, setCustomValue]);
 
+	const bodyImages = React.useMemo(() => {
+		return <BodyImages setCustomValue={setCustomValue} imgSrc={imageSrc} />;
+	}, [imageSrc, setCustomValue]);
+
 	const bodyContent = React.useMemo(() => {
 		switch (step) {
 			case STEPS.CATEGORY:
@@ -167,7 +173,7 @@ const RentModal = () => {
 			case STEPS.INFO:
 				return bodyInfo;
 			case STEPS.IMAGES:
-				return <BodyImages />;
+				return bodyImages;
 			case STEPS.DESCRIPTION:
 				return <BodyDescription />;
 			case STEPS.PRICE:
@@ -175,7 +181,7 @@ const RentModal = () => {
 			default:
 				return bodyCategory;
 		}
-	}, [bodyCategory, bodyInfo, bodyLocation, step]);
+	}, [bodyCategory, bodyImages, bodyInfo, bodyLocation, step]);
 
 	return (
 		<Modal
@@ -276,21 +282,21 @@ const BodyInfo: React.FC<BodyInfoProps> = ({ setCustomValue, values }) => {
 	return (
 		<>
 			<Counter
-				onChange={(value) => setCustomValue("guestCount", value)}
+				onChange={(value) => setCustomValue(STEP_KEY.GUEST_COUNT, value)}
 				value={guestCount}
 				title="Guests"
 				subtitle="How many guests do you allow?"
 			/>
 			<hr />
 			<Counter
-				onChange={(value) => setCustomValue("roomCount", value)}
+				onChange={(value) => setCustomValue(STEP_KEY.ROOM_COUNT, value)}
 				value={roomCount}
 				title="Rooms"
 				subtitle="How many rooms do you have?"
 			/>
 			<hr />
 			<Counter
-				onChange={(value) => setCustomValue("bathroomCount", value)}
+				onChange={(value) => setCustomValue(STEP_KEY.BATHROOM_COUNT, value)}
 				value={bathroomCount}
 				title="Bathrooms"
 				subtitle="How many bathrooms do you have?"
@@ -299,8 +305,20 @@ const BodyInfo: React.FC<BodyInfoProps> = ({ setCustomValue, values }) => {
 	);
 };
 
-const BodyImages: React.FC<Props> = ({}) => {
-	return <></>;
+interface BodyImagesProps {
+	setCustomValue: (id: string, value: any) => void;
+	imgSrc: string;
+}
+
+const BodyImages: React.FC<BodyImagesProps> = ({ imgSrc, setCustomValue }) => {
+	return (
+		<>
+			<ImageUpload
+				onChange={(value) => setCustomValue(STEP_KEY.IMAGE_SRC, value)}
+				value={imgSrc}
+			/>
+		</>
+	);
 };
 
 const BodyDescription: React.FC<Props> = ({}) => {
