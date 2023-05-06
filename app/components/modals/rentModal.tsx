@@ -5,11 +5,22 @@ import { useRentModal } from "@/app/hooks";
 import Heading from "../heading";
 import { categories } from "../categories";
 import CategoryBoxInput from "../categories/input";
-import { FieldValues, useForm } from "react-hook-form";
+import {
+	FieldErrors,
+	FieldValues,
+	SubmitHandler,
+	UseFormRegister,
+	useForm,
+} from "react-hook-form";
 import CountrySelect from "../select/country";
 import dynamic from "next/dynamic";
 import Counter from "../inputs/counter";
 import ImageUpload from "../upload/image";
+import Input from "../inputs";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { ROUTE } from "@/app/api/constant";
 
 enum STEP_KEY {
 	CATEGORY = "category",
@@ -33,8 +44,10 @@ enum STEPS {
 }
 
 const RentModal = () => {
+	const router = useRouter();
 	const rentModal = useRentModal();
 	const [step, setStep] = React.useState(STEPS.CATEGORY);
+	const [isLoading, setIsLoading] = React.useState(false);
 
 	const onBack = () => {
 		setStep((value) => value - 1);
@@ -139,6 +152,30 @@ const RentModal = () => {
 		[setValue]
 	);
 
+	const onSubmit: SubmitHandler<FieldValues> = (data: any) => {
+		if (step !== STEPS.PRICE) {
+			return onNext();
+		}
+
+		setIsLoading(true);
+
+		axios
+			.post(ROUTE.listings, data)
+			.then(() => {
+				toast.success("Listing created successfully!");
+				router.refresh();
+				reset();
+				setStep(STEPS.CATEGORY);
+				rentModal.onClose();
+			})
+			.catch(() => {
+				toast.error("Something went wrong.");
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
 	const bodyCategory = React.useMemo(() => {
 		return <BodyCategory setCustomValue={setCustomValue} category={category} />;
 	}, [category, setCustomValue]);
@@ -164,6 +201,22 @@ const RentModal = () => {
 		return <BodyImages setCustomValue={setCustomValue} imgSrc={imageSrc} />;
 	}, [imageSrc, setCustomValue]);
 
+	const bodyDescription = React.useMemo(() => {
+		return (
+			<BodyDescription
+				register={register}
+				errors={errors}
+				isLoading={isLoading}
+			/>
+		);
+	}, [errors, isLoading, register]);
+
+	const bodyPrice = React.useMemo(() => {
+		return (
+			<BodyPrice register={register} errors={errors} isLoading={isLoading} />
+		);
+	}, [errors, isLoading, register]);
+
 	const bodyContent = React.useMemo(() => {
 		switch (step) {
 			case STEPS.CATEGORY:
@@ -175,21 +228,28 @@ const RentModal = () => {
 			case STEPS.IMAGES:
 				return bodyImages;
 			case STEPS.DESCRIPTION:
-				return <BodyDescription />;
+				return bodyDescription;
 			case STEPS.PRICE:
-				return <BodyPrice />;
+				return bodyPrice;
 			default:
 				return bodyCategory;
 		}
-	}, [bodyCategory, bodyImages, bodyInfo, bodyLocation, step]);
+	}, [
+		bodyCategory,
+		bodyDescription,
+		bodyImages,
+		bodyInfo,
+		bodyLocation,
+		bodyPrice,
+		step,
+	]);
 
 	return (
 		<Modal
+			isLoading={isLoading}
 			isOpen={rentModal.isOpen}
 			onClose={rentModal.onClose}
-			onSubmit={() => {
-				onNext();
-			}}
+			onSubmit={handleSubmit(onSubmit)}
 			title="Airbnb your home!"
 			actionLabel={actionLabel}
 			secondaryActionLabel={secondaryActionLabel}
@@ -321,12 +381,59 @@ const BodyImages: React.FC<BodyImagesProps> = ({ imgSrc, setCustomValue }) => {
 	);
 };
 
-const BodyDescription: React.FC<Props> = ({}) => {
-	return <></>;
+interface BodyDescriptionProps {
+	isLoading: boolean;
+	register: UseFormRegister<FieldValues>;
+	errors: FieldErrors;
+}
+
+const BodyDescription: React.FC<BodyDescriptionProps> = ({
+	errors,
+	isLoading,
+	register,
+}) => {
+	return (
+		<>
+			<Input
+				id={STEP_KEY.TITLE}
+				label="Title"
+				disabled={isLoading}
+				register={register}
+				errors={errors}
+				required
+			/>
+			<hr />
+			<Input
+				id={STEP_KEY.DESCRIPTION}
+				label="Description"
+				disabled={isLoading}
+				register={register}
+				errors={errors}
+				required
+			/>
+		</>
+	);
 };
 
-const BodyPrice: React.FC<Props> = ({}) => {
-	return <></>;
+const BodyPrice: React.FC<BodyDescriptionProps> = ({
+	errors,
+	isLoading,
+	register,
+}) => {
+	return (
+		<>
+			<Input
+				id="price"
+				label="Price"
+				formatPrice
+				type="number"
+				disabled={isLoading}
+				register={register}
+				errors={errors}
+				required
+			/>
+		</>
+	);
 };
 
 export default RentModal;
