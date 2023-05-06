@@ -8,6 +8,7 @@ import CategoryBoxInput from "../categories/input";
 import { FieldValues, useForm } from "react-hook-form";
 import CountrySelect from "../select/country";
 import dynamic from "next/dynamic";
+import Counter from "../inputs/counter";
 
 enum STEP_KEY {
 	CATEGORY = "category",
@@ -121,6 +122,9 @@ const RentModal = () => {
 
 	const category = watch(STEP_KEY.CATEGORY);
 	const location = watch(STEP_KEY.LOCATION);
+	const guestCount = watch(STEP_KEY.GUEST_COUNT);
+	const roomCount = watch(STEP_KEY.ROOM_COUNT);
+	const bathroomCount = watch(STEP_KEY.BATHROOM_COUNT);
 
 	const setCustomValue = React.useCallback(
 		(id: string, value: any) => {
@@ -133,18 +137,35 @@ const RentModal = () => {
 		[setValue]
 	);
 
+	const bodyCategory = React.useMemo(() => {
+		return <BodyCategory setCustomValue={setCustomValue} category={category} />;
+	}, [category, setCustomValue]);
+
+	const bodyLocation = React.useMemo(() => {
+		return <BodyLocation setCustomValue={setCustomValue} location={location} />;
+	}, [location, setCustomValue]);
+
+	const bodyInfo = React.useMemo(() => {
+		return (
+			<BodyInfo
+				setCustomValue={setCustomValue}
+				values={{
+					bathroomCount,
+					guestCount,
+					roomCount,
+				}}
+			/>
+		);
+	}, [bathroomCount, guestCount, roomCount, setCustomValue]);
+
 	const bodyContent = React.useMemo(() => {
 		switch (step) {
 			case STEPS.CATEGORY:
-				return (
-					<BodyCategory setCustomValue={setCustomValue} category={category} />
-				);
+				return bodyCategory;
 			case STEPS.LOCATION:
-				return (
-					<BodyLocation setCustomValue={setCustomValue} location={location} />
-				);
+				return bodyLocation;
 			case STEPS.INFO:
-				return <BodyInfo />;
+				return bodyInfo;
 			case STEPS.IMAGES:
 				return <BodyImages />;
 			case STEPS.DESCRIPTION:
@@ -152,11 +173,9 @@ const RentModal = () => {
 			case STEPS.PRICE:
 				return <BodyPrice />;
 			default:
-				return (
-					<BodyCategory setCustomValue={setCustomValue} category={category} />
-				);
+				return bodyCategory;
 		}
-	}, [category, location, setCustomValue, step]);
+	}, [bodyCategory, bodyInfo, bodyLocation, step]);
 
 	return (
 		<Modal
@@ -244,8 +263,40 @@ const BodyLocation: React.FC<BodyLocationProps> = ({
 	);
 };
 
-const BodyInfo: React.FC<Props> = ({}) => {
-	return <></>;
+interface BodyInfoProps {
+	setCustomValue: (id: string, value: any) => void;
+	values: {
+		guestCount: number;
+		roomCount: number;
+		bathroomCount: number;
+	};
+}
+const BodyInfo: React.FC<BodyInfoProps> = ({ setCustomValue, values }) => {
+	const { bathroomCount, guestCount, roomCount } = values;
+	return (
+		<>
+			<Counter
+				onChange={(value) => setCustomValue("guestCount", value)}
+				value={guestCount}
+				title="Guests"
+				subtitle="How many guests do you allow?"
+			/>
+			<hr />
+			<Counter
+				onChange={(value) => setCustomValue("roomCount", value)}
+				value={roomCount}
+				title="Rooms"
+				subtitle="How many rooms do you have?"
+			/>
+			<hr />
+			<Counter
+				onChange={(value) => setCustomValue("bathroomCount", value)}
+				value={bathroomCount}
+				title="Bathrooms"
+				subtitle="How many bathrooms do you have?"
+			/>
+		</>
+	);
 };
 
 const BodyImages: React.FC<Props> = ({}) => {
