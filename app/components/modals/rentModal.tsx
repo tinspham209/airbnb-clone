@@ -6,6 +6,8 @@ import Heading from "../heading";
 import { categories } from "../categories";
 import CategoryBoxInput from "../categories/input";
 import { FieldValues, useForm } from "react-hook-form";
+import CountrySelect from "../select/country";
+import dynamic from "next/dynamic";
 
 enum STEP_KEY {
 	CATEGORY = "category",
@@ -118,6 +120,7 @@ const RentModal = () => {
 	});
 
 	const category = watch(STEP_KEY.CATEGORY);
+	const location = watch(STEP_KEY.LOCATION);
 
 	const setCustomValue = React.useCallback(
 		(id: string, value: any) => {
@@ -137,7 +140,9 @@ const RentModal = () => {
 					<BodyCategory setCustomValue={setCustomValue} category={category} />
 				);
 			case STEPS.LOCATION:
-				return <BodyLocation />;
+				return (
+					<BodyLocation setCustomValue={setCustomValue} location={location} />
+				);
 			case STEPS.INFO:
 				return <BodyInfo />;
 			case STEPS.IMAGES:
@@ -151,7 +156,7 @@ const RentModal = () => {
 					<BodyCategory setCustomValue={setCustomValue} category={category} />
 				);
 		}
-	}, [category, setCustomValue, step]);
+	}, [category, location, setCustomValue, step]);
 
 	return (
 		<Modal
@@ -210,8 +215,33 @@ const BodyCategory: React.FC<BodyCategoryProps> = ({
 	);
 };
 
-const BodyLocation: React.FC<Props> = ({}) => {
-	return <></>;
+interface BodyLocationProps {
+	setCustomValue: (id: string, value: any) => void;
+	location: any;
+}
+
+const BodyLocation: React.FC<BodyLocationProps> = ({
+	location,
+	setCustomValue,
+}) => {
+	const Map = React.useMemo(
+		() =>
+			dynamic(() => import("../map"), {
+				ssr: false,
+			}),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[location]
+	);
+
+	return (
+		<>
+			<CountrySelect
+				value={location}
+				onChange={(value) => setCustomValue(STEP_KEY.LOCATION, value)}
+			/>
+			<Map center={location?.latlng} />
+		</>
+	);
 };
 
 const BodyInfo: React.FC<Props> = ({}) => {
