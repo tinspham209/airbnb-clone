@@ -48,7 +48,7 @@ const Button: React.FC<Props> = ({
 			type={type}
 		>
 			{loading ? (
-				<div className="absolute left-4 top-3">
+				<div className={`absolute left-4 ${small ? "top-1" : "top-3"}`}>
 					<svg
 						aria-hidden="true"
 						className={`w-5 h-5 text-gray-200 animate-spin dark:text-gray-600

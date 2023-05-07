@@ -21,6 +21,7 @@ interface ListingCardProps {
 	actionLabel?: string;
 	actionId?: string;
 	currentUser?: SafeUser | null;
+	isLoading?: boolean;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -31,6 +32,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
 	actionLabel,
 	actionId = "",
 	currentUser,
+	isLoading = false,
 }) => {
 	const router = useRouter();
 	const { getByValue } = useCountries();
@@ -89,10 +91,10 @@ const ListingCard: React.FC<ListingCardProps> = ({
 						<HeartButton listingId={data.id} currentUser={currentUser} />
 					</div>
 				</div>
-				<div className="font-semibold text-lg">
+				<div className="font-semibold text-lg whitespace-nowrap">
 					{location?.region}, {location?.label}
 				</div>
-				<div className="font-light text-neutral-500">
+				<div className="font-light text-neutral-500 whitespace-nowrap">
 					{reservationDate || data.category}
 				</div>
 				<div className="flex flex-row items-center gap-1">
@@ -100,7 +102,12 @@ const ListingCard: React.FC<ListingCardProps> = ({
 					{!reservation && <div className="font-light">night</div>}
 				</div>
 				{onAction && actionLabel && (
-					<Button disabled={disabled} small onClick={handleCancel}>
+					<Button
+						disabled={disabled}
+						small
+						onClick={handleCancel}
+						loading={isLoading}
+					>
 						{actionLabel}
 					</Button>
 				)}

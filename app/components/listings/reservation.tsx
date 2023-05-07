@@ -12,6 +12,7 @@ interface ListingReservationProps {
 	onSubmit: () => void;
 	disabled?: boolean;
 	disabledDates: Date[];
+	isLoading?: boolean;
 }
 
 const ListingReservation: React.FC<ListingReservationProps> = ({
@@ -22,6 +23,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
 	onSubmit,
 	disabled,
 	disabledDates,
+	isLoading,
 }) => {
 	return (
 		<div className="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden">
@@ -37,7 +39,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
 			/>
 			<hr />
 			<div className="p-4">
-				<Button disabled={disabled} onClick={onSubmit}>
+				<Button disabled={disabled} onClick={onSubmit} loading={isLoading}>
 					Reserve
 				</Button>
 			</div>

@@ -2,7 +2,7 @@
 
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { useCallback, useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 
 import { SafeReservation, SafeUser } from "@/app/types";
@@ -21,11 +21,13 @@ const TripsClient: React.FC<TripsClientProps> = ({
 	currentUser,
 }) => {
 	const router = useRouter();
-	const [deletingId, setDeletingId] = useState("");
+	const [deletingId, setDeletingId] = React.useState("");
+	const [isLoading, setIsLoading] = React.useState(false);
 
-	const onCancel = useCallback(
+	const onCancel = React.useCallback(
 		(id: string) => {
 			setDeletingId(id);
+			setIsLoading(true);
 
 			axios
 				.delete(`${ROUTE.reservations}/${id}`)
@@ -35,9 +37,11 @@ const TripsClient: React.FC<TripsClientProps> = ({
 				})
 				.catch((error) => {
 					toast.error(error?.response?.data?.error);
+					setIsLoading(false);
 				})
 				.finally(() => {
 					setDeletingId("");
+					setIsLoading(false);
 				});
 		},
 		[router]
@@ -60,6 +64,7 @@ const TripsClient: React.FC<TripsClientProps> = ({
 						disabled={deletingId === reservation.id}
 						actionLabel="Cancel reservation"
 						currentUser={currentUser}
+						isLoading={isLoading}
 					/>
 				))}
 			</div>
