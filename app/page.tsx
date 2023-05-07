@@ -1,3 +1,41 @@
-export default function Home() {
-	return <div className="text-rose-500 text-2xl">Hello Airbnb</div>;
+import getListings, { IListingsParams } from "@/app/actions/getListings";
+import getCurrentUser from "@/app/actions/getCurrentUser";
+import ClientOnly from "./components/clientOnly";
+import EmptyState from "./components/empty";
+import Container from "./components/container";
+import ListingCard from "./components/listings/card";
+
+interface HomeProps {
+	searchParams: IListingsParams;
 }
+
+const Home = async ({ searchParams }: HomeProps) => {
+	const listings = await getListings(searchParams);
+	const currentUser = await getCurrentUser();
+
+	if (listings.length === 0) {
+		return (
+			<ClientOnly>
+				<EmptyState showReset />
+			</ClientOnly>
+		);
+	}
+
+	return (
+		<ClientOnly>
+			<Container>
+				<div className="pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8">
+					{listings.map((listing: any) => (
+						<ListingCard
+							currentUser={currentUser}
+							key={listing.id}
+							data={listing}
+						/>
+					))}
+				</div>
+			</Container>
+		</ClientOnly>
+	);
+};
+
+export default Home;
