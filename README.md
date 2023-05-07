@@ -10,6 +10,10 @@
 - MongoDB
 - Next/auth
 
+# Screenshot
+
+<img src="./images/homescreen.png" />
+
 ## Installation
 
 1. setup `.env` file
