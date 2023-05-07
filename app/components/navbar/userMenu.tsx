@@ -54,7 +54,7 @@ const UserMenu: React.FC<Props> = ({ currentUser }) => {
 			{
 				label: "My favorites",
 				onClick: () => {
-					toast.success("My favorites");
+					router.push("/favorites");
 				},
 				isShow: isLoggedIn,
 			},
