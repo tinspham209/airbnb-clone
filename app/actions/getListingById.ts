@@ -22,7 +22,7 @@ export default async function getListingById(params: IParams) {
 			return null;
 		}
 
-		const safeListing: SafeListing = {
+		const safeListing = {
 			...listing,
 			createdAt: listing.createdAt.toString(),
 			user: {

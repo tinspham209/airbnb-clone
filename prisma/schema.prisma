@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -34,10 +31,10 @@ model Account {
   providerAccountId String
   refresh_token     String? @db.String
   access_token      String? @db.String
-  exprires_at       Int?
+  expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String  @db.String
+  id_token          String? @db.String
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -56,24 +53,22 @@ model Listing {
   bathroomCount Int
   guestCount    Int
   locationValue String
+  userId        String   @db.ObjectId
   price         Int
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @db.ObjectId
-
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   reservations Reservation[]
 }
 
 model Reservation {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @db.ObjectId
-
-  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  listingId String  @db.ObjectId
-
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  listingId  String   @db.ObjectId
   startDate  DateTime
   endDate    DateTime
   totalPrice Int
   createdAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
