@@ -68,7 +68,7 @@ const UserMenu: React.FC<Props> = ({ currentUser }) => {
 			{
 				label: "My properties",
 				onClick: () => {
-					toast.success("My properties");
+					router.push("/properties");
 				},
 				isShow: isLoggedIn,
 			},
