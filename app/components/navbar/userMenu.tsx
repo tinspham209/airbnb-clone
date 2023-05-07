@@ -8,10 +8,12 @@ import { toast } from "react-hot-toast";
 import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "../avatar";
 import MenuItem from "./menuItem";
+import { useRouter } from "next/navigation";
 type Props = {
 	currentUser?: SafeUser | null;
 };
 const UserMenu: React.FC<Props> = ({ currentUser }) => {
+	const router = useRouter();
 	const [isOpen, setIsOpen] = React.useState(false);
 
 	const isLoggedIn = React.useMemo(() => {
@@ -45,14 +47,7 @@ const UserMenu: React.FC<Props> = ({ currentUser }) => {
 			{
 				label: "My trips",
 				onClick: () => {
-					toast.success("My trips");
-				},
-				isShow: isLoggedIn,
-			},
-			{
-				label: "My trips",
-				onClick: () => {
-					toast.success("My trips");
+					router.push("/trips");
 				},
 				isShow: isLoggedIn,
 			},
@@ -93,7 +88,7 @@ const UserMenu: React.FC<Props> = ({ currentUser }) => {
 				isShow: isLoggedIn,
 			},
 		];
-	}, [isLoggedIn, loginModal, registerModal, rentModal]);
+	}, [isLoggedIn, loginModal, registerModal, rentModal, router]);
 
 	const onRent = React.useCallback(() => {
 		if (!currentUser) {
