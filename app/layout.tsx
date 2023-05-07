@@ -5,6 +5,7 @@ import Navbar from "./components/navbar";
 import "./globals.css";
 import ToasterProvider from "./providers/ToasterProvider";
 import { getCurrentUser } from "./actions";
+export const dynamic = "force-dynamic";
 
 export const metadata = {
 	title: "Airbnb",
